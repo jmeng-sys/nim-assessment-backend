@@ -42,6 +42,23 @@ const getOne = async (id) => {
   }
 };
 
+const updateOne = async (id) => {
+  try {
+    const menuItem = await MenuItems.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          price: 50
+        }
+      },
+      { new: true }
+    );
+    return menuItem;
+  } catch (error) {
+    return error;
+  }
+};
+
 const create = async (body) => {
   try {
     const menuItem = await MenuItems.create(body);
@@ -51,4 +68,4 @@ const create = async (body) => {
   }
 };
 
-module.exports = { getAll, getOne, create, MenuItems };
+module.exports = { getAll, getOne, updateOne, create, MenuItems };
