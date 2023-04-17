@@ -68,14 +68,49 @@ const create = async (body) => {
   }
 };
 
-
 const removeOne = async (id) => {
-  try{
+  try {
     const menuItem = await MenuItems.deleteOne({ _id: id });
     return menuItem;
   } catch (error) {
     return error;
   }
-}
+};
 
-module.exports = { getAll, getOne, updateOne, create, removeOne, MenuItems };
+/* const searchItem = async (keyword) => {
+  
+  try {
+    const menuItem = await MenuItems.find({ description: {$regex: keyword, $options: "i"}
+      // $or: [
+      //   {name: key}, {description: key}
+      // ]
+    });
+    return menuItem;
+  } catch (error) {
+    return error;
+  }
+} */
+
+const searchItem = async (keyword) => {
+  try {
+    const menuItem = await MenuItems.find({
+      $or: [
+        { name: { $regex: keyword, $options: "i" } },
+        { description: { $regex: keyword, $options: "i" } }
+      ]
+    });
+    return menuItem;
+  } catch (error) {
+    return error;
+  }
+};
+
+module.exports = {
+  getAll,
+  getOne,
+  updateOne,
+  create,
+  removeOne,
+  searchItem,
+  MenuItems
+};
