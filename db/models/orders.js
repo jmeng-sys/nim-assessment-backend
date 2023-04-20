@@ -16,7 +16,7 @@ const orderSchema = new mongoose.Schema({
   items: [
     {
       item: {
-        type: mongoose.Schema.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "MenuItems"
       },
 
@@ -44,41 +44,70 @@ const orderSchema = new mongoose.Schema({
 orderSchema.set("toJSON", {
   virtuals: true
 });
+// orderSchema.statics.calcTotal = (items) =>
+//   items.reduce((total, item) => {
+//     if (item.status === "confirmed" || item.status === "delivered")
+//       return (total + item.price * item.quantity);
+//     return total;
+//   }, 0);
+
 orderSchema.statics.calcTotal = (items) =>
   items.reduce((total, item) => total + item.price * item.quantity, 0);
 
 // order model
-const Order = mongoose.model("Order", orderSchema);
+const Orders = mongoose.model("Orders", orderSchema);
 
 const getAll = async () => {
   // populate each item
-  const orders = await Order.find().populate("items.item");
-
-  return orders;
+  try {
+    const orders = await Orders.find().populate("items.item");
+    return orders;
+  } catch (error) {
+    return error;
+  }
 };
 
 const getOne = async (id) => {
-  const order = await Order.findById(id).populate("items.item");
+  const order = await Orders.findById(id).populate("items.item");
   return order;
 };
 
 const create = async (body) => {
-  const order = await Order.create(body);
+  const order = await Orders.create(body);
   return order;
 };
 
+const getTotalSales = async () => {
+  const startDate = new Date("2022-01-01");
+  const endDate = new Date("2022-07-31");
+
+  const orders = await Orders.find({
+    updatedAt: { $gte: startDate, $lte: endDate }
+  }).populate("items.item");
+
+  const totalSales = await orders.reduce((total, order) => {
+    const itemsTotal = order.items.reduce(
+      (total2, item) => total2 + item.item.price * item.quantity,
+      0
+    );
+    return total + itemsTotal;
+  }, 0);
+
+  return JSON.stringify({ TotalSales: `$${totalSales}` });
+};
+
 const update = async (id, body) => {
-  const order = await Order.findByIdAndUpdate(id, body, { new: true });
+  const order = await Orders.findByIdAndUpdate(id, body, { new: true });
   return order;
 };
 
 const remove = async (id) => {
-  const order = await Order.findByIdAndDelete(id);
+  const order = await Orders.findByIdAndDelete(id);
   return order.id;
 };
 
 const getByStatus = async (status) => {
-  const orders = await Order.find({ status }).populate("items");
+  const orders = await Orders.find({ status }).populate("items");
   return orders;
 };
 
@@ -89,5 +118,6 @@ module.exports = {
   update,
   remove,
   getByStatus,
-  Order
+  Orders,
+  getTotalSales
 };

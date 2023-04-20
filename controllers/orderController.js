@@ -1,9 +1,9 @@
-const Order = require("../db/models/orders.js");
+const Orders = require("../db/models/orders.js");
 
 const getAll = async (req, res) => {
   try {
-    const orders = await Order.getAll();
-    res.send(orders);
+    const order = await Orders.getAll();
+    res.send(order);
   } catch (error) {
     res.status(500).send(error);
   }
@@ -11,7 +11,7 @@ const getAll = async (req, res) => {
 
 const getOne = async (req, res) => {
   try {
-    const order = await Order.getOne(req.params.id);
+    const order = await Orders.getOne(req.params.id);
     if (order) {
       res.send(order);
     } else {
@@ -24,7 +24,7 @@ const getOne = async (req, res) => {
 
 const create = async (req, res) => {
   try {
-    const order = await Order.create(req.body);
+    const order = await Orders.create(req.body);
     res.send(order);
   } catch (error) {
     res.status(500).send(error);
@@ -33,7 +33,7 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    const order = await Order.update(req.params.id, req.body);
+    const order = await Orders.update(req.params.id, req.body);
     res.send(order);
   } catch (error) {
     res.status(500).send(error);
@@ -42,7 +42,7 @@ const update = async (req, res) => {
 
 const remove = async (req, res) => {
   try {
-    const order = await Order.remove(req.params.id);
+    const order = await Orders.remove(req.params.id);
     res.send(order);
   } catch (error) {
     res.status(500).send(error);
@@ -51,7 +51,7 @@ const remove = async (req, res) => {
 
 const getByCustomer = async (req, res) => {
   try {
-    const orders = await Order.getByCustomer(req.params.id);
+    const orders = await Orders.getByCustomer(req.params.id);
     res.send(orders);
   } catch (error) {
     res.status(500).send(error);
@@ -60,8 +60,17 @@ const getByCustomer = async (req, res) => {
 
 const getByStatus = async (req, res) => {
   try {
-    const orders = await Order.getByStatus(req.params.status);
+    const orders = await Orders.getByStatus(req.params.status);
     res.send(orders);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+const getTotalSales = async (req, res) => {
+  try {
+    const total = await Orders.getTotalSales();
+    res.send(total);
   } catch (error) {
     res.status(500).send(error);
   }
@@ -74,5 +83,6 @@ module.exports = {
   update,
   remove,
   getByCustomer,
-  getByStatus
+  getByStatus,
+  getTotalSales
 };
