@@ -70,12 +70,8 @@ const create = async (body) => {
 
 
 const removeOne = async (id) => {
-  try{
-    const menuItem = await MenuItems.deleteOne({ _id: id });
-    return menuItem;
-  } catch (error) {
-    return error;
-  }
+  const menuItem = await MenuItems.findByIdAndDelete(id);
+  return menuItem.id;
 }
 
 module.exports = { getAll, getOne, updateOne, create, removeOne, MenuItems };
