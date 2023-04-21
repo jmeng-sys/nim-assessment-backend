@@ -16,6 +16,10 @@ const menuItemsSchema = new mongoose.Schema({
   },
   imageUrl: {
     type: String
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
   }
 });
 menuItemsSchema.set("toJSON", {
@@ -42,21 +46,11 @@ const getOne = async (id) => {
   }
 };
 
-const updateOne = async (id) => {
-  try {
-    const menuItem = await MenuItems.findByIdAndUpdate(
-      id,
-      {
-        $set: {
-          price: 50
-        }
-      },
-      { new: true }
-    );
-    return menuItem;
-  } catch (error) {
-    return error;
-  }
+const updateOne = async (id, body) => {
+  const menuItem = await MenuItems.findByIdAndUpdate(id, body, { new: true });
+  menuItem.updatedAt = Date.now();
+  menuItem.save();
+  return menuItem;
 };
 
 const create = async (body) => {
@@ -69,27 +63,9 @@ const create = async (body) => {
 };
 
 const removeOne = async (id) => {
-  try {
-    const menuItem = await MenuItems.deleteOne({ _id: id });
-    return menuItem;
-  } catch (error) {
-    return error;
-  }
+  const menuItem = await MenuItems.findByIdAndDelete(id);
+  return menuItem.id;
 };
-
-/* const searchItem = async (keyword) => {
-  
-  try {
-    const menuItem = await MenuItems.find({ description: {$regex: keyword, $options: "i"}
-      // $or: [
-      //   {name: key}, {description: key}
-      // ]
-    });
-    return menuItem;
-  } catch (error) {
-    return error;
-  }
-} */
 
 const searchItem = async (keyword) => {
   try {
