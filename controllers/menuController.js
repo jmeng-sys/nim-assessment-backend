@@ -47,7 +47,7 @@ const removeOne = async (req, res) => {
 
 const searchItem = async (req, res) => {
   try {
-    const menu = await MenuItems.searchItem(req.query.p);
+    const menu = await MenuItems.searchItem(req.query.q);
     res.send(menu);
   } catch (error) {
     res.status(500).send(error);
